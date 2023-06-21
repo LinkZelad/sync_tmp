@@ -1,0 +1,84 @@
+<?xml version="1.0" ?>
+<robot name="Haulerbot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<xacro:include filename="$(find Haulerbot_description)/urdf/materials.xacro" />
+<xacro:include filename="$(find Haulerbot_description)/urdf/Haulerbot.trans" />
+<xacro:include filename="$(find Haulerbot_description)/urdf/Haulerbot.gazebo" />
+<link name="base_link">
+  <inertial>
+    <origin xyz="0.07580823602416138 0.006381734131785486 0.4231379504141113" rpy="0 0 0"/>
+    <mass value="521.1802599077216"/>
+    <inertia ixx="42.097486" iyy="49.884503" izz="42.239853" ixy="-0.041009" iyz="0.305445" ixz="-1.829608"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://Haulerbot_description/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://Haulerbot_description/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="left_wheel_1_1_1">
+  <inertial>
+    <origin xyz="4.501815445479007e-06 -0.007993939899360647 1.319694414095296e-06" rpy="0 0 0"/>
+    <mass value="5.669210709151551"/>
+    <inertia ixx="0.012325" iyy="0.023174" izz="0.012325" ixy="0.0" iyz="1e-06" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.203634 -0.206863 -0.080534" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://Haulerbot_description/meshes/left_wheel_1_1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.203634 -0.206863 -0.080534" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://Haulerbot_description/meshes/left_wheel_1_1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="right_wheel_1_1_1">
+  <inertial>
+    <origin xyz="2.0278069082224626e-06 0.03991216670943282 -1.527211403729023e-07" rpy="0 0 0"/>
+    <mass value="5.687168802116011"/>
+    <inertia ixx="0.012338" iyy="0.023175" izz="0.012338" ixy="-0.0" iyz="1e-06" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.203634 0.24015 -0.080492" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://Haulerbot_description/meshes/right_wheel_1_1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.203634 0.24015 -0.080492" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="package://Haulerbot_description/meshes/right_wheel_1_1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="jl" type="continuous">
+  <origin xyz="0.203634 0.206863 0.080534" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="left_wheel_1_1_1"/>
+  <axis xyz="-0.0 1.0 9.4e-05"/>
+</joint>
+
+<joint name="jr" type="continuous">
+  <origin xyz="0.203634 -0.24015 0.080492" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="right_wheel_1_1_1"/>
+  <axis xyz="-0.0 1.0 9.4e-05"/>
+</joint>
+
+</robot>

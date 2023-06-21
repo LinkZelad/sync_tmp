@@ -1,0 +1,16 @@
+<launch>
+    <arg name="model" default="$(find my_model)/urdf/car.urdf.xacro" />
+
+    <param name="robot_description" command="$(find xacro)/xacro $(arg model)" />
+
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find my_model)/config/mycar.rviz"/>
+
+    <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher" />
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" />
+    <!-- <node pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" name="joint_state_publisher_gui" /> -->
+    <node name="arbotix" pkg="arbotix_python" type="arbotix_driver" output="screen">
+     <rosparam file="$(find my_model)/config/control.yaml" command="load" />
+     <param name="sim" value="true" />
+    </node>
+
+</launch>
