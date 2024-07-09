@@ -1,5 +1,5 @@
-a = [[1, 2, 3], [4, 5, 6, 7]]
-
-b = map(len, a)
-for i, e in enumerate(b):
-    print(i, e)
+if __name__ == "__main__":
+    import sys
+    sys.path.insert(0, "..")
+    from ch2.node import Node
+    from ch2.searchs import bfs
