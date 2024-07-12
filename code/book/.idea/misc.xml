@@ -5,7 +5,7 @@
     <option name="pathToExecutable" value="$USER_HOME$/.local/bin/black" />
     <option name="sdkUUID" value="746b3cdb-d60a-4e07-8a08-fe898a246a17" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="book" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="datastruct" project-jdk-type="Python SDK" />
   <component name="PythonCompatibilityInspectionAdvertiser">
     <option name="version" value="3" />
   </component>
