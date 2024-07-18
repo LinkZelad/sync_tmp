@@ -5,7 +5,9 @@ from edge import Edge
 V = TypeVar("V")
 
 class Graph(Generic[V]):
-    def __init__(self, vertices: List[V] = []) -> None:
+    def __init__(self, vertices=None) -> None:
+        if vertices is None:
+            vertices = []
         self._vertices: List[V] = vertices
         self._edges: List[List[Edge]] = [[] for _ in vertices]
 
@@ -89,14 +91,15 @@ if __name__ == '__main__':
     city_graph.add_edge_by_vertices("Boston", "New York")
     city_graph.add_edge_by_vertices("New York", "Philadelphia")
     city_graph.add_edge_by_vertices("Philadelphia", "Washington")
+    print(city_graph)
 
-    import sys
-    sys.path.insert(0, "../ch2")
-
-    from node import Node
-    from searchs import dfs, node_to_path
-
-    bfs_results = dfs("Boston", lambda x: x == "Miami", city_graph.neighbors_of_vertex)
-    if bfs_results:
-        path = node_to_path(bfs_results)
-        print("Path form Boston to Miami: \n", path)
+    # import sys
+    # sys.path.insert(0, "../ch2")
+    #
+    # from node import Node
+    # from searchs import dfs, node_to_path
+    #
+    # bfs_results = dfs("Boston", lambda x: x == "Miami", city_graph.neighbors_of_vertex)
+    # if bfs_results:
+    #     path = node_to_path(bfs_results)
+    #     print("Path form Boston to Miami: \n", path)

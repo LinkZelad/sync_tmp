@@ -5,7 +5,9 @@ from weighted_edge import WeightedEdge
 V = TypeVar("V")
 
 class WeightedGraph(Generic[V], Graph[V]):
-    def __init__(self, vertivces: List[V] = []) -> None:
+    def __init__(self, vertivces=None) -> None:
+        if vertivces is None:
+            vertivces = []
         self._vertices: List[V] = vertivces
         self._edges: List[List[WeightedEdge]] = [[] for _ in vertivces]
 
