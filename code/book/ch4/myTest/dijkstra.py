@@ -1,17 +1,15 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from mst import WeightedPath, print_weighted_path
-from weighted_graph import WeightedGraph
-from weighted_edge import WeightedEdge
+from weight_edge import WeightEdge
+from weightgraph import WeightGraph
 from priority_queue import PriorityQueue
 from typing import List, Tuple, Dict, TypeVar, Optional
 
+
 V = TypeVar('V')
-
-
 @dataclass
 class DijkstraNode:
-    vertext: int
+    vertex: V
     distance: float
 
     def __lt__(self, other: DijkstraNode) -> bool:
@@ -21,54 +19,48 @@ class DijkstraNode:
         return self.distance == other.distance
 
 
-def dijkstra(wg: WeightedGraph[V], root: V) -> Tuple[List[Optional[float]], Dict[int, WeightedEdge]]:
-    first: int = wg.index_of_vertex(root)
-    path_dict: Dict[V, WeightedEdge] = {}
-    distances: List[Optional[float]] = [None] * wg.vertex_count
-    distances[first] = 0
+
+def dijkstra(wg: WeightGraph, start: V):
+    first = DijkstraNode(start, 0)
+    distances: Dict[V, float] = {start: 0}
+    path_dict: Dict[V, WeightEdge] = {}
 
     pq: PriorityQueue = PriorityQueue()
-    pq.push(DijkstraNode(first, 0))
-    count = 0
+    pq.push(first)
 
     while not pq.empty:
-        current: int = pq.pop().vertext
-        dist_current: float = distances[current]
-
-        for edge in wg.edges_for_index(current):
-            count += 1
-            dist_next: float = distances[edge.v]
-            if dist_next is None or dist_next > edge.weight + dist_current:
-                distances[edge.v] = edge.weight + dist_current
-                path_dict[edge.v] = edge
-                pq.push(DijkstraNode(edge.v, distances[edge.v] + dist_current))
-
-    print(f"count: {count}")
+        current_node = pq.pop()
+        distance = current_node.distance
+        for edge in wg.edges_of_vertex(current_node.vertex):
+            vertex = wg.vertex_at(edge.t)
+            new_distance = distance + edge.weight
+            if vertex not in distances or distances[vertex] > new_distance:
+                distances[vertex] = new_distance
+                path_dict[vertex] = edge
+                pq.push(DijkstraNode(vertex, new_distance))
     return distances, path_dict
 
+def distance_from_root(distances: Dict[V, float]):
+    for v,d in distances.items():
+        print(f"{v} -> {d}")
 
-def distance_array_to_vertex_dict(wg: WeightedGraph[V], distances: List[Optional[float]]) -> Dict[V, Optional[float]]:
-    distance_dict: Dict[V, Optional[float]] = {}
-    for i in range(len(distances)):
-        distance_dict[wg.vertex_at(i)] = distances[i]
-    return distance_dict
-
-
-def path_dict_to_path(start: int, end: int, path_dict: Dict[int, WeightedEdge]) -> WeightedPath:
-    if len(path_dict) == 0:
-        return []
-    edge_path: WeightedPath = []
-    e: WeightedEdge = path_dict[end]
-    edge_path.append(e)
-    while e.u != start:
-        e = path_dict[e.u]
-        edge_path.append(e)
-    edge_path.reverse()
-    return edge_path
+def print_dijkstra_path(wg:WeightGraph, start:V, end:V, path_dict: Dict[V, WeightEdge]):
+    path: V = [end]
+    weight: List[float] = []
+    v = end
+    while v != start:
+        weight.append(path_dict[v].weight)
+        v: V = wg.vertex_at(path_dict[v].f)
+        path.append(v)
+    path.reverse()
+    weight.reverse()
+    for i in range(len(weight)):
+        print(f"{path[i]:<15} -> {path[i+1]:<15} cost {weight[i]:<}")
+    print(f"Total weight: {sum(weight)}")
 
 
 if __name__ == '__main__':
-    city_graph2: WeightedGraph[str] = WeightedGraph(
+    city_graph2: WeightGraph[str] = WeightGraph(
         ["Seattle", "San Francisco", "Los Angeles", "Riverside", "Phoenix", "Chicago", "Boston", "New York", "Atlanta",
          "Miami", "Dallas", "Houston", "Detroit", "Philadelphia", "Washington"])
     city_graph2.add_edge_by_vertices("Seattle", "Chicago", 1737)
@@ -98,14 +90,7 @@ if __name__ == '__main__':
     city_graph2.add_edge_by_vertices("New York", "Philadelphia", 81)
     city_graph2.add_edge_by_vertices("Philadelphia", "Washington", 123)
 
-    distances, path_dict = dijkstra(city_graph2, "Los Angeles")
-    name_distance: Dict[str, Optional[int]] = distance_array_to_vertex_dict(city_graph2, distances)
-    print("Distances from Los Angeles:")
-    for key, value in name_distance.items():
-        print(f"{key} : {value}")
-    print("")  # blank line
+    distances_list, path_dicts = dijkstra(city_graph2, "Los Angeles")
+    # distance_from_root(distances)
+    print_dijkstra_path(city_graph2,"Los Angeles", "Philadelphia", path_dicts)
 
-    print("Shortest path from Los Angeles to Boston:")
-    path: WeightedPath = path_dict_to_path(city_graph2.index_of_vertex("Los Angeles"),
-                                           city_graph2.index_of_vertex("New York"), path_dict)
-    print_weighted_path(city_graph2, path)

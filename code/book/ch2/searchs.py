@@ -79,6 +79,7 @@ def bfs(initial, goal_test, successors):
             print(f"bfs_count:{count}")
             return current_node
         for child in successors(current_state):
+            print(child)
             count += 1
             if child in explored:
                 continue

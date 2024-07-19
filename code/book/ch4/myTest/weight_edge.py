@@ -15,7 +15,6 @@ class WeightEdge(Edge):
     def __str__(self):
         return f"{self.f} cost {self.weight} to {self.t}"
 
-
 if __name__ == '__main__':
     weight_edge = WeightEdge(0, 1, 10.1)
     print(weight_edge)

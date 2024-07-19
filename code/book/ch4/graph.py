@@ -93,13 +93,13 @@ if __name__ == '__main__':
     city_graph.add_edge_by_vertices("Philadelphia", "Washington")
     print(city_graph)
 
-    # import sys
-    # sys.path.insert(0, "../ch2")
-    #
-    # from node import Node
-    # from searchs import dfs, node_to_path
-    #
-    # bfs_results = dfs("Boston", lambda x: x == "Miami", city_graph.neighbors_of_vertex)
-    # if bfs_results:
-    #     path = node_to_path(bfs_results)
-    #     print("Path form Boston to Miami: \n", path)
+    import sys
+    sys.path.insert(0, "../ch2")
+
+    from node import Node
+    from searchs import dfs, node_to_path
+
+    bfs_results = dfs("Boston", lambda x: x == "Miami", city_graph.neighbors_of_vertex)
+    if bfs_results:
+        path = node_to_path(bfs_results)
+        print("Path form Boston to Miami: \n", path)

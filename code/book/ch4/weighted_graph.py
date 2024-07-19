@@ -61,6 +61,7 @@ if __name__ == '__main__':
     city_graph2.add_edge_by_vertices("Boston", "New York", 190)
     city_graph2.add_edge_by_vertices("New York", "Philadelphia", 81)
     city_graph2.add_edge_by_vertices("Philadelphia", "Washington", 123)
+    print(city_graph2)
 
     from mst import mst, print_weighted_path
     # print(city_graph2.neighbors_for_index_with_weights(0))

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import (List, Dict, TypeVar)
+from typing import (List, Dict, TypeVar, Callable)
 
 from edge import Edge
 
@@ -10,6 +10,8 @@ V = TypeVar('V')
 """
 f means from, t means to
 """
+
+
 class Graph:
     def __init__(self, vertices=None):
         if vertices is None:
@@ -58,7 +60,7 @@ class Graph:
     def vertex_at(self, index) -> int:
         return self.vertices[index]
 
-    def index_of_vertex(self, v:V) -> V:
+    def index_of_vertex(self, v: V) -> V:
         return self.vertices.index(v)
 
     def neighbors_of_index(self, f_index: int) -> List[V]:
@@ -67,10 +69,10 @@ class Graph:
     def neighbors_of_vertex(self, v: V) -> List[V]:
         return self.neighbors_of_index(self.index_of_vertex(v))
 
-    def edges_of_index(self, index: int) -> List[Edge]:
+    def edges_of_index(self, index: int):
         return self.edges[index]
 
-    def edges_of_vertex(self, vertex: V) -> List[Edge]:
+    def edges_of_vertex(self, vertex: V):
         return self.edges_of_index(self.index_of_vertex(vertex))
 
     def __str__(self):
@@ -78,15 +80,106 @@ class Graph:
         desc += f"Vertices: {self.vertices}\n"
         desc += f"Vertex count: {self.vertex_count}\n"
         desc += "Edges:\n\033[31m"
-        for v in self.vertices:
-            desc += f"    {v} --> {[self.vertex_at(e.t) for e in self.edges[self.index_of_vertex(v)]]}\n"
+        for i in range(self.vertex_count):
+            # desc += f"    {self.vertex_at(i)} --> {[self.vertex_at(e.t) for e in self.edges[i]]}\n"
+            desc += f"    {self.vertex_at(i)} --> {self.neighbors_of_index(i)}\n"
+        # for v in self.vertices:
+        #     desc += f"    {v} --> {[self.vertex_at(e.t) for e in self.edges[self.index_of_vertex(v)]]}\n"
         desc += "\033[0m"
         return desc
 
 
 if __name__ == '__main__':
-    g = Graph(["a", "b", "c", "d", "e"])
-    g.add_edge_by_vertices("a", "b")
-    g.add_edge_by_vertices("a", "e")
-    g.add_edge_by_vertices("a", "d")
-    print(g)
+    city_graph: Graph[str] = Graph(
+        ["Seattle", "San Francisco", "Los Angeles", "Riverside", "Phoenix", "Chicago", "Boston", "New York", "Atlanta",
+         "Miami", "Dallas", "Houston", "Detroit", "Philadelphia", "Washington"])
+    city_graph.add_edge_by_vertices("Seattle", "Chicago")
+    city_graph.add_edge_by_vertices("Seattle", "San Francisco")
+    city_graph.add_edge_by_vertices("San Francisco", "Riverside")
+    city_graph.add_edge_by_vertices("San Francisco", "Los Angeles")
+    city_graph.add_edge_by_vertices("Los Angeles", "Riverside")
+    city_graph.add_edge_by_vertices("Los Angeles", "Phoenix")
+    city_graph.add_edge_by_vertices("Riverside", "Phoenix")
+    city_graph.add_edge_by_vertices("Riverside", "Chicago")
+    city_graph.add_edge_by_vertices("Phoenix", "Dallas")
+    city_graph.add_edge_by_vertices("Phoenix", "Houston")
+    city_graph.add_edge_by_vertices("Dallas", "Chicago")
+    city_graph.add_edge_by_vertices("Dallas", "Atlanta")
+    city_graph.add_edge_by_vertices("Dallas", "Houston")
+    city_graph.add_edge_by_vertices("Houston", "Atlanta")
+    city_graph.add_edge_by_vertices("Houston", "Miami")
+    city_graph.add_edge_by_vertices("Atlanta", "Chicago")
+    city_graph.add_edge_by_vertices("Atlanta", "Washington")
+    city_graph.add_edge_by_vertices("Atlanta", "Miami")
+    city_graph.add_edge_by_vertices("Miami", "Washington")
+    city_graph.add_edge_by_vertices("Chicago", "Detroit")
+    city_graph.add_edge_by_vertices("Detroit", "Boston")
+    city_graph.add_edge_by_vertices("Detroit", "Washington")
+    city_graph.add_edge_by_vertices("Detroit", "New York")
+    city_graph.add_edge_by_vertices("Boston", "New York")
+    city_graph.add_edge_by_vertices("New York", "Philadelphia")
+    city_graph.add_edge_by_vertices("Philadelphia", "Washington")
+
+    from collections import deque
+
+    from dataclasses import dataclass
+
+    T = TypeVar("T")
+
+
+    @dataclass
+    class Node:
+        current_content: T
+        parent_node: Node | None
+
+
+    class Queue:
+        def __init__(self):
+            self.container = deque()
+
+        @property
+        def is_empty(self) -> bool:
+            return not self.container
+
+        def push(self, item):
+            self.container.append(item)
+
+        def pop(self):
+            return self.container.popleft()
+
+        def __repr__(self) -> str:
+            return repr(self.container)
+
+
+    def bfs(start: T, end_condition: Callable[[T], bool], search_dom: Callable) -> None | Node:
+        qe: Queue = Queue()
+        first_node = Node(start, None)
+        qe.push(first_node)
+
+        explored: set[T] = {start}
+
+        while not qe.is_empty:
+            current_node: Node = qe.pop()
+            current_content = current_node.current_content
+            if end_condition(current_content):
+                return current_node
+
+            for child in search_dom(current_content):
+                if child in explored:
+                    continue
+                qe.push(Node(child, current_node))
+                explored.add(child)
+        return None
+
+
+    def path_to_print(node: Node) -> List[T]:
+        path: List[T] = []
+        while node is not None:
+            path.append(node.current_content)
+            node = node.parent_node
+        path.reverse()
+        return path
+
+
+    # solution = bfs("Boston", lambda x: x == "Miami", city_graph.neighbors_of_vertex)
+    # print(path_to_print(solution))
